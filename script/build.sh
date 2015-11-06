@@ -206,15 +206,15 @@ for TARGET in $TARGETS; do
     # Build the requested darwin binaries
     if [ $XGOARCH == "." ] || [ $XGOARCH == "amd64" ]; then
       echo "Compiling for darwin-$PLATFORM/amd64..."
-      CC=o64-clang CXX=o64-clang++ HOST=x86_64-apple-darwin15 PREFIX=/usr/local $BUILD_DEPS /deps
-      CC=o64-clang CXX=o64-clang++ GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go get $V $X "${T[@]}" --ldflags="-s $LD" -d ./$PACK
-      CC=o64-clang CXX=o64-clang++ GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build $V $X "${T[@]}" --ldflags="-s $LD" $R -o /build/$NAME-darwin-amd64$R ./$PACK
+      CC=x86_64-apple-darwin15-clang CXX=x86_64-apple-darwin15-clang++ HOST=x86_64-apple-darwin15 PREFIX=/usr/local $BUILD_DEPS /deps
+      CC=x86_64-apple-darwin15-clang CXX=x86_64-apple-darwin15-clang++ GOOS=darwin GOARCH=amd64 CGO_CFLAGS="-F/osxcross/target/bin/../SDK/MacOSX10.11.sdk/System/Library/Frameworks -I/osxcross/target/bin/../SDK/MacOSX10.11.sdk/usr/include" CGO_ENABLED=1 go get $V $X "${T[@]}" -ldflags="-s $LD" -d ./$PACK
+      CC=x86_64-apple-darwin15-clang CXX=x86_64-apple-darwin15-clang++ GOOS=darwin GOARCH=amd64 CGO_CFLAGS="-F/osxcross/target/bin/../SDK/MacOSX10.11.sdk/System/Library/Frameworks -I/osxcross/target/bin/../SDK/MacOSX10.11.sdk/usr/include" CGO_ENABLED=1 go build $V $X "${T[@]}" -ldflags="-s $LD" $R -o /build/$NAME-darwin-amd64$R ./$PACK
     fi
     if [ $XGOARCH == "." ] || [ $XGOARCH == "386" ]; then
       echo "Compiling for darwin-$PLATFORM/386..."
-      CC=o32-clang CXX=o32-clang++ HOST=i386-apple-darwin13 PREFIX=/usr/local $BUILD_DEPS /deps
-      CC=o32-clang CXX=o32-clang++ GOOS=darwin GOARCH=386 CGO_ENABLED=1 go get $V $X "${T[@]}" --ldflags="-s $LD" -d ./$PACK
-      CC=o32-clang CXX=o32-clang++ GOOS=darwin GOARCH=386 CGO_ENABLED=1 go build $V $X "${T[@]}" --ldflags="-s $LD" -o /build/$NAME-darwin-$PLATFORM-386 ./$PACK
+      CC=i386-apple-darwin15-clang CXX=o32-clang++ HOST=i386-apple-darwin13 PREFIX=/usr/local $BUILD_DEPS /deps
+      CC=i386-apple-darwin15-clang CXX=o32-clang++ GOOS=darwin GOARCH=386 CGO_ENABLED=1 go get $V $X "${T[@]}" --ldflags="-s $LD" -d ./$PACK
+      CC=i386-apple-darwin15-clang CXX=o32-clang++ GOOS=darwin GOARCH=386 CGO_ENABLED=1 go build $V $X "${T[@]}" --ldflags="-s $LD" -o /build/$NAME-darwin-$PLATFORM-386 ./$PACK
     fi
     # Remove any automatically injected deployment target vars
     unset MACOSX_DEPLOYMENT_TARGET
