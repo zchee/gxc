@@ -108,16 +108,13 @@ RUN /go_bootstrap.sh
 # Inject the old Go package downloader and tool-chain bootstrapper
 ADD script/bootstrap.sh /bootstrap.sh
 ENV BOOTSTRAP /bootstrap.sh
-RUN chmod +x $BOOTSTRAP
 
 # Inject the C dependency cross compiler
 ADD script/build_deps.sh /build_deps.sh
 ENV BUILD_DEPS /build_deps.sh
-RUN chmod +x $BUILD_DEPS
 
 # Inject the container entry point, the build script
 ADD script/build.sh /build.sh
 ENV BUILD /build.sh
-RUN chmod +x $BUILD
 
 ENTRYPOINT ["/build.sh"]

@@ -206,9 +206,9 @@ for TARGET in $TARGETS; do
     # Build the requested darwin binaries
     if [ $XGOARCH == "." ] || [ $XGOARCH == "amd64" ]; then
       echo "Compiling for darwin-$PLATFORM/amd64..."
-      CC=o64-clang CXX=o64-clang++ CGO_CFLAGS="-stdlib=libstdc++" HOST=x86_64-apple-darwin15 PREFIX=/usr/local $BUILD_DEPS /deps
-      CC=o64-clang CXX=o64-clang++ CGO_CFLAGS="-stdlib=libstdc++" GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go get $V $X "${T[@]}" --ldflags="-s $LD" -d ./$PACK
-      CC=o64-clang CXX=o64-clang++ CGO_CFLAGS="-stdlib=libstdc++" GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build $V $X "${T[@]}" --ldflags="-s $LD" $R -o /build/$NAME-darwin-amd64$R ./$PACK
+      CC=o64-clang CXX=o64-clang++ HOST=x86_64-apple-darwin15 PREFIX=/usr/local $BUILD_DEPS /deps
+      CC=o64-clang CXX=o64-clang++ GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go get $V $X "${T[@]}" --ldflags="-s $LD" -d ./$PACK
+      CC=o64-clang CXX=o64-clang++ GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build $V $X "${T[@]}" --ldflags="-s $LD" $R -o /build/$NAME-darwin-amd64$R ./$PACK
     fi
     if [ $XGOARCH == "." ] || [ $XGOARCH == "386" ]; then
       echo "Compiling for darwin-$PLATFORM/386..."
