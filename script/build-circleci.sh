@@ -6,7 +6,7 @@ then
   docker load < ~/cache/$CIRCLE_PROJECT_REPONAME.tar
 else
   mkdir -p ~/cache
-  docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME -f $DOCKERFILE .
+  sudo lxc-attach -n "$(docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME -f $DOCKERFILE .)"
   md5sum Dockerfile | cut -d' ' -f1 > ~/cache/dockerfile.digest
   docker save $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME > ~/cache/$CIRCLE_PROJECT_REPONAME.tar
 fi

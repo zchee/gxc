@@ -1,0 +1,17 @@
+machine:
+  environment:
+    DOCKERFILE: Dockerfile
+  services:
+    - docker
+dependencies:
+  cache_directories:
+    - "~/cache"
+  override:
+    - cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../
+    - ./script/build-circleci.sh
+test:
+  pre:
+    - env | sort
+  override:
+    - docker version
+    # - docker build -t zchee/gxc .
