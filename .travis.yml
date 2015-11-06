@@ -13,6 +13,7 @@ before_install:
   - env | sort
   - docker info && docker version
   - cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../
+  - ./script/build-travis.sh
   - docker build -t $TRAVIS_REPO_SLUG .
 script:
   - docker info
