@@ -11,6 +11,7 @@ services:
 
 before_install:
   - env | sort
+  - docker info && docker version
   - cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../
   - docker build -t $TRAVIS_REPO_SLUG .
 script:
