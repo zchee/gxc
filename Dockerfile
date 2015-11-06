@@ -63,7 +63,7 @@ RUN chmod +x $FETCH
 RUN git clone https://github.com/tpoechtrager/osxcross.git
 
 ARG SDK_VERSION
-ENV SDK_VERSION ${SDK_VERSION}
+ENV SDK_VERSION ${SDK_VERSION:-10.11}
 ADD SDKs/MacOSX$SDK_VERSION.sdk.tar.xz /osxcross/tarballs/
 RUN cd /osxcross/tarballs && \
 	tar -cf - * | xz -9 -c - > MacOSX$SDK_VERSION.sdk.tar.xz && \
