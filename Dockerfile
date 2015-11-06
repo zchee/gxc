@@ -54,7 +54,6 @@ ENV GOPATH /go
 # Inject the remote file fetcher and checksum verifier
 ADD script/fetch.sh /fetch.sh
 ENV FETCH /fetch.sh
-RUN chmod +x $FETCH
 
 # Configure the container for OSX cross compilation
 # ENV OSX_SDK_PATH    https://s3.amazonaws.com/andrew-osx-sdks/MacOSX10.9.sdk.tar.xz
