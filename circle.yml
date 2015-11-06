@@ -6,9 +6,13 @@ machine:
 dependencies:
   cache_directories:
     - "~/cache"
+    - "./SDKs"
   override:
-    - cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../
-    - ./script/build-circleci.sh
+    - docker version && docker info
+    - if [[ $(ls ./SDKs/*.tar.xz) > 0 ]] ; then echo "Cached"; else cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../ ; fi
+    - docker pull buildpack-deps:wily-scm
+    - docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest -f $DOCKERFILE .
+    # - ./script/build-circleci.sh
 test:
   pre:
     - env | sort
