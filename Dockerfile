@@ -37,11 +37,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		gcc-5-multilib \
 		g++-mingw-w64 \
 		gcc-mingw-w64 \
-		libc6-dev-armel-cross
+		libc6-dev-armel-cross && \
+	rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/include/asm-generic /usr/include/asm
-
-RUN rm -rf /var/lib/apt/lists/*
 
 # Inject the remote file fetcher and checksum verifier
 ADD script/fetch.sh /fetch.sh
