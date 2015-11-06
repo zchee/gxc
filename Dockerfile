@@ -41,23 +41,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN ln -s /usr/include/asm-generic /usr/include/asm
 
-# RUN	wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|apt-key add - && \
-# 	apt-get update && apt-get install -y --no-install-recommends \
-# 		clang-3.7 \
-# 		llvm-3.7-dev \
-	# && rm -rf /var/lib/apt/lists/*
-
-# Configure the Go environment, since it's not going to change
-ENV PATH   /usr/local/go/bin:$PATH
-ENV GOPATH /go
+RUN rm -rf /var/lib/apt/lists/*
 
 # Inject the remote file fetcher and checksum verifier
 ADD script/fetch.sh /fetch.sh
 ENV FETCH /fetch.sh
-
-# Configure the container for OSX cross compilation
-# ENV OSX_SDK_PATH    https://s3.amazonaws.com/andrew-osx-sdks/MacOSX10.9.sdk.tar.xz
-# ENV OSX_SDK         MacOSX10.9.sdk
 
 RUN git clone https://github.com/tpoechtrager/osxcross.git
 
@@ -67,16 +55,8 @@ ADD SDKs/MacOSX$SDK_VERSION.sdk.tar.xz /osxcross/tarballs/
 RUN cd /osxcross/tarballs && \
 	tar -cf - * | xz -9 -c - > MacOSX$SDK_VERSION.sdk.tar.xz && \
 	rm -rf MacOSX$SDK_VERSION.sdk
-# RUN cd /osxcross/tarballs && tar zcf MacOSX$OSX_SDK_VERSION.sdk.tar.xz $OSX_SDK_VERSION
-
-# RUN sed -i -e 's|-march=native||g' /osxcross/build_clang.sh /osxcross/wrapper/build.sh && \
-      # UNATTENDED=yes OSX_VERSION_MIN=10.11 /osxcross/build.sh
-# RUN UNATTENDED=yes SDK_VERSION=10.11 OSX_VERSION_MIN=10.11 /osxcross/build.sh
 ENV MACOSX_DEPLOYMENT_TARGET $SDK_VERSION
 RUN UNATTENDED=yes SDK_VERSION=$SDK_VERSION OSX_VERSION_MIN=$SDK_VERSION /osxcross/build.sh
-# # OSX_VERSION_MIN=10.6
-# # $FETCH $OSX_SDK_PATH e2f01f6dc7611df4783d2adc279d15132f4e9851 && \
-# # mv `basename $OSX_SDK_PATH` /osxcross/tarballs/               && \
 
 ENV PATH /osxcross/target/bin:$PATH
 
@@ -99,8 +79,11 @@ RUN $FETCH $ANDROID_NDK_PATH c685e5f106f8daa9b5449d0a4f21ee8c0afcb2f6 && \
 
 ENV PATH /usr/$ANDROID_CHAIN_ARM/bin:$PATH
 
+# Bootstrap Golang
 ARG GOLANG_VERSION
 ENV GOLANG_VERSION ${GOLANG_VERSION:-1.5.1}
+ENV PATH           /usr/local/go/bin:$PATH
+ENV GOPATH         /go
 ADD script/go_bootstrap.sh /go_bootstrap.sh
 RUN /go_bootstrap.sh
 
