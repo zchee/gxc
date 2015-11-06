@@ -8,6 +8,9 @@ dependencies:
     - "~/cache"
     - "./SDKs"
   pre:
+    - sudo service docker stop
+    - sudo DOCKER_OPTS="-s aufs -e lxc -D --userland-proxy=false" docker -d:
+          background: true
     - env | sort
     - docker version && docker info
     - if [[ $(ls ./SDKs/*.tar.xz) > 0 ]] ; then echo "Cached"; else cd ./SDKs && curl -LO $OSX_SDK_TARBALL && cd ../ ; fi
