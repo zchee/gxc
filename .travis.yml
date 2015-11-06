@@ -12,4 +12,5 @@ services:
 before_install:
   - env | sort
   - docker build -t $TRAVIS_REPO_SLUG:base -f Dockerfile.base .
-
+script:
+  - docker info
