@@ -62,14 +62,19 @@ RUN chmod +x $FETCH
 
 RUN git clone https://github.com/tpoechtrager/osxcross.git
 
-ADD SDKs/*.tar.gz /osxcross/tarballs/
-ENV OSX_SDK_VERSION MacOSX10.11.sdk
-RUN cd /osxcross/tarballs && tar zcf $OSX_SDK_VERSION.tar.gz $OSX_SDK_VERSION
+ARG SDK_VERSION
+ENV SDK_VERSION ${SDK_VERSION}
+ADD SDKs/MacOSX$SDK_VERSION.sdk.tar.xz /osxcross/tarballs/
+RUN cd /osxcross/tarballs && \
+	tar -cf - * | xz -9 -c - > MacOSX$SDK_VERSION.sdk.tar.xz && \
+	rm -rf MacOSX$SDK_VERSION.sdk
+# RUN cd /osxcross/tarballs && tar zcf MacOSX$OSX_SDK_VERSION.sdk.tar.xz $OSX_SDK_VERSION
 
 # RUN sed -i -e 's|-march=native||g' /osxcross/build_clang.sh /osxcross/wrapper/build.sh && \
       # UNATTENDED=yes OSX_VERSION_MIN=10.11 /osxcross/build.sh
 # RUN UNATTENDED=yes SDK_VERSION=10.11 OSX_VERSION_MIN=10.11 /osxcross/build.sh
-RUN UNATTENDED=yes SDK_VERSION=10.11 OSX_VERSION_MIN=10.6 /osxcross/build.sh
+ENV MACOSX_DEPLOYMENT_TARGET $SDK_VERSION
+RUN UNATTENDED=yes SDK_VERSION=$SDK_VERSION OSX_VERSION_MIN=$SDK_VERSION /osxcross/build.sh
 # # OSX_VERSION_MIN=10.6
 # # $FETCH $OSX_SDK_PATH e2f01f6dc7611df4783d2adc279d15132f4e9851 && \
 # # mv `basename $OSX_SDK_PATH` /osxcross/tarballs/               && \
@@ -95,15 +100,15 @@ RUN $FETCH $ANDROID_NDK_PATH c685e5f106f8daa9b5449d0a4f21ee8c0afcb2f6 && \
 
 ENV PATH /usr/$ANDROID_CHAIN_ARM/bin:$PATH
 
+ARG GOLANG_VERSION
+ENV GOLANG_VERSION ${GOLANG_VERSION:-1.5.1}
+ADD script/go_bootstrap.sh /go_bootstrap.sh
+RUN /go_bootstrap.sh
+
 # Inject the old Go package downloader and tool-chain bootstrapper
 ADD script/bootstrap.sh /bootstrap.sh
 ENV BOOTSTRAP /bootstrap.sh
 RUN chmod +x $BOOTSTRAP
-
-# Inject the new Go root distribution downloader and secondary bootstrapper
-ADD script/bootstrap_pure.sh /bootstrap_pure.sh
-ENV BOOTSTRAP_PURE /bootstrap_pure.sh
-RUN chmod +x $BOOTSTRAP_PURE
 
 # Inject the C dependency cross compiler
 ADD script/build_deps.sh /build_deps.sh
